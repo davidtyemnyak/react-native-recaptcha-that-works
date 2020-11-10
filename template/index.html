@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title></title>
-    <script src="https://www.google.com/recaptcha/api.js?hl={{lang}}" async defer></script>
+    <script src="https://www.google.com/recaptcha/api.js?render={{site-key}}" async defer></script>
     <script>
         const sitekey = '{{site-key}}';
         const theme = '{{theme}}';
@@ -46,9 +46,9 @@
             }));
         }
 
-        const isReady = () => Boolean(typeof window === 'object' && window.grecaptcha && window.grecaptcha.render);
+        const isReady = () => window.grecaptcha.ready;
 
-        const registerOnCloseListener = () => {
+/*         const registerOnCloseListener = () => {
             if (onCloseObserver) {
                 onCloseObserver.disconnect();
             }
@@ -73,13 +73,13 @@
                 attributes: true,
                 attributeFilter: ['style'],
             });
-        }
+        } */
 
-        const isRendered = () => {
+/*         const isRendered = () => {
             return typeof widget === 'number';
-        }
+        } */
 
-        const renderRecaptcha = () => {
+/*         const renderRecaptcha = () => {
             widget = window.grecaptcha.render('recaptcha-container', {
                 sitekey,
                 size,
@@ -92,17 +92,17 @@
                 onLoad();
             }
             onCloseInterval = setInterval(registerOnCloseListener, 1000);
-        }
+        } */
 
         const updateReadyState = () => {
             if (isReady()) {
                 clearInterval(readyInterval);
-                renderRecaptcha()
+                /* renderRecaptcha() */
             }
         }
 
         if (isReady()) {
-            renderRecaptcha();
+            /* renderRecaptcha(); */
         } else {
             readyInterval = setInterval(updateReadyState, 1000);
         }
@@ -110,15 +110,17 @@
         
         window.rnRecaptcha = {
             execute: () => {
-                window.grecaptcha.execute(widget);
+                window.grecaptcha.execute('{{site-key}}', {action: 'submit'}).then(function(token) {
+                    onVerify(token);
+                });
             },
             reset: () => {
-                window.grecaptcha.reset(widget);
+                /* window.grecaptcha.reset(widget); */
             },
         }
     </script>
 
-    <style>
+<!--     <style>
         html,
         body,
         .container {
@@ -135,13 +137,13 @@
             justify-content: center;
             align-items: center;
         }
-    </style>
+    </style> -->
 </head>
 
 <body>
-    <div class="container">
+<!--     <div class="container">
         <span id="recaptcha-container"></span>
-    </div>
+    </div> -->
 </body>
 
 </html>

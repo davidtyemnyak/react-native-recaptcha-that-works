@@ -23,17 +23,16 @@
 */
 
 const getTemplate = (params) => {
-    let template = `
-    <!DOCTYPE html>
+    let template = `<!DOCTYPE html>
     <html lang="{{lang}}">
     
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title></title>
-        <script src="https://www.google.com/recaptcha/api.js?hl={{lang}}" async defer></script>
+        <script src="https://www.google.com/recaptcha/api.js?render={{site-key}}" async defer></script>
         <script>
-            const siteKey = '{{siteKey}}';
+            const sitekey = '{{site-key}}';
             const theme = '{{theme}}';
             const size = '{{size}}';
     
@@ -72,9 +71,9 @@ const getTemplate = (params) => {
                 }));
             }
     
-            const isReady = () => Boolean(typeof window === 'object' && window.grecaptcha && window.grecaptcha.render);
+            const isReady = () => window.grecaptcha.ready;
     
-            const registerOnCloseListener = () => {
+    /*         const registerOnCloseListener = () => {
                 if (onCloseObserver) {
                     onCloseObserver.disconnect();
                 }
@@ -99,15 +98,15 @@ const getTemplate = (params) => {
                     attributes: true,
                     attributeFilter: ['style'],
                 });
-            }
+            } */
     
-            const isRendered = () => {
+    /*         const isRendered = () => {
                 return typeof widget === 'number';
-            }
+            } */
     
-            const renderRecaptcha = () => {
+    /*         const renderRecaptcha = () => {
                 widget = window.grecaptcha.render('recaptcha-container', {
-                    sitekey: siteKey,
+                    sitekey,
                     size,
                     theme,
                     callback: onVerify,
@@ -118,17 +117,17 @@ const getTemplate = (params) => {
                     onLoad();
                 }
                 onCloseInterval = setInterval(registerOnCloseListener, 1000);
-            }
+            } */
     
             const updateReadyState = () => {
                 if (isReady()) {
                     clearInterval(readyInterval);
-                    renderRecaptcha()
+                    /* renderRecaptcha() */
                 }
             }
     
             if (isReady()) {
-                renderRecaptcha();
+                /* renderRecaptcha(); */
             } else {
                 readyInterval = setInterval(updateReadyState, 1000);
             }
@@ -136,15 +135,17 @@ const getTemplate = (params) => {
             
             window.rnRecaptcha = {
                 execute: () => {
-                    window.grecaptcha.execute(widget);
+                    window.grecaptcha.execute('{{site-key}}', {action: 'submit'}).then(function(token) {
+                        onVerify(token);
+                    });
                 },
                 reset: () => {
-                    window.grecaptcha.reset(widget);
+                    /* window.grecaptcha.reset(widget); */
                 },
             }
         </script>
     
-        <style>
+    <!--     <style>
             html,
             body,
             .container {
@@ -157,19 +158,21 @@ const getTemplate = (params) => {
     
             .container {
                 display: flex;
+                background-color: rgba(0, 0, 0, 0.5);
                 justify-content: center;
                 align-items: center;
             }
-        </style>
+        </style> -->
     </head>
     
     <body>
-        <div class="container">
+    <!--     <div class="container">
             <span id="recaptcha-container"></span>
-        </div>
+        </div> -->
     </body>
     
-    </html>`;
+    </html>
+    `;
 
 
     Object.entries(params)

@@ -96,10 +96,14 @@ const Recaptcha = forwardRef(
             (...args) => {
                 onLoad && onLoad(...args);
 
-                if (isInvisibleSize) {
-                    $webView.current.injectJavaScript(`
-            window.rnRecaptcha.execute();
-          `);
+                if (isInvisibleSize && siteKey) {
+                  $webView.current.injectJavaScript(`
+                    window.grecaptcha.execute('${siteKey}', {action: 'submit'}).then(function(token) {
+                      onVerify(token);
+                      true;
+                    });
+                    true;
+                  `);
                 }
 
                 setLoading(false);
